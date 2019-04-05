@@ -1,0 +1,41 @@
+---
+- name: Install a exe and uninstall on azure devops agent
+  gather_facts: False
+  hosts: 127.0.0.1
+
+  tasks:
+      
+# create a new directory to copy all the setup files
+    - name: Create a new directory to copy files
+      win_file:
+        path: c:\automation
+        state: directory
+
+# copy all the setup files 
+    - name: Copy required softwares
+      win_copy:
+        src: d:\a\1\s\fortify.zip
+        dest: c:\automation\
+
+# unzip the package
+    - name: unzip the fortify setup
+      win_unzip:
+        src: c:\automation\fortify.zip
+        dest: c:\automation\
+
+# install fortify
+    - name: Install software
+      raw: 'c:\automation\fortify.exe install'
+      
+# to check and uninstall the previous installation
+
+    - name: check if software exists
+      win_stat:
+        path: c:\automation\fortify.exe
+      register: instal
+
+    - name: Uninstall software 
+      raw: 'c:\automation\fortify.exe uninstall'
+      when: instal.stat.exists
+
+
